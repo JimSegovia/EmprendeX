@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, Filter, ChevronLeft, ChevronRight, Plus, Box, Calendar as CalendarIcon } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import Animated, { screenEntering, sectionEntering } from '@/components/ui/motion';
 
 export default function CalendarioScreen() {
   const insets = useSafeAreaInsets();
@@ -26,11 +27,12 @@ export default function CalendarioScreen() {
   });
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center justify-between"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="mr-4">
@@ -41,11 +43,11 @@ export default function CalendarioScreen() {
         <TouchableOpacity>
           <Filter color="white" size={24} />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      <ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false} entering={sectionEntering(1)}>
         {/* Month Selector */}
-        <View className="flex-row items-center justify-between mb-6 px-4">
+        <Animated.View className="flex-row items-center justify-between mb-6 px-4" entering={sectionEntering(2)}>
           <TouchableOpacity>
             <ChevronLeft size={24} color="#334155" />
           </TouchableOpacity>
@@ -53,10 +55,10 @@ export default function CalendarioScreen() {
           <TouchableOpacity>
             <ChevronRight size={24} color="#334155" />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Calendar Grid */}
-        <View className="mb-6">
+        <Animated.View className="mb-6" entering={sectionEntering(3)}>
           <View className="flex-row justify-between mb-4">
             {weekdays.map((day, i) => (
               <Text key={i} className="text-slate-500 text-sm font-medium w-10 text-center">
@@ -89,7 +91,7 @@ export default function CalendarioScreen() {
               </View>
             ))}
           </View>
-        </View>
+        </Animated.View>
 
         <View className="h-[1px] bg-slate-100 mb-6" />
 
@@ -97,9 +99,9 @@ export default function CalendarioScreen() {
         <Text className="text-violet-600 font-bold text-lg mb-4">Lunes 20 de mayo</Text>
 
         {/* Events List */}
-        <View className="space-y-3 pb-24">
+        <Animated.View className="space-y-3 pb-24" entering={sectionEntering(4)}>
           {/* Item 1 */}
-          <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3">
+          <Animated.View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3" entering={sectionEntering(5)}>
             <View className="flex-row items-center flex-1">
               <View className="w-12 h-12 rounded-xl bg-violet-50 items-center justify-center mr-3 border border-violet-100">
                 <Box size={24} color="#7c3aed" />
@@ -115,10 +117,10 @@ export default function CalendarioScreen() {
                 <Text className="text-orange-600 font-semibold text-xs">En camino</Text>
               </View>
             </View>
-          </View>
+          </Animated.View>
 
           {/* Item 2 */}
-          <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3">
+          <Animated.View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3" entering={sectionEntering(6)}>
             <View className="flex-row items-center flex-1">
               <View className="w-12 h-12 rounded-xl bg-violet-50 items-center justify-center mr-3 border border-violet-100">
                 <CalendarIcon size={24} color="#7c3aed" />
@@ -134,10 +136,10 @@ export default function CalendarioScreen() {
                 <Text className="text-emerald-600 font-semibold text-xs">Reservado</Text>
               </View>
             </View>
-          </View>
+          </Animated.View>
 
           {/* Item 3 */}
-          <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3">
+          <Animated.View className="flex-row items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100 mb-3" entering={sectionEntering(7)}>
             <View className="flex-row items-center flex-1">
               <View className="w-12 h-12 rounded-xl bg-violet-50 items-center justify-center mr-3 border border-violet-100">
                 <Box size={24} color="#f59e0b" />
@@ -153,9 +155,9 @@ export default function CalendarioScreen() {
                 <Text className="text-amber-600 font-semibold text-xs">Pendiente</Text>
               </View>
             </View>
-          </View>
-        </View>
-      </ScrollView>
+          </Animated.View>
+        </Animated.View>
+      </Animated.ScrollView>
 
       {/* FAB */}
       <TouchableOpacity 
@@ -165,6 +167,6 @@ export default function CalendarioScreen() {
       >
         <Plus color="white" size={30} />
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 }

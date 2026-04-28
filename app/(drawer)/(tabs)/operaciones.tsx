@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
-import { Search, Filter, ArrowLeft } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { Search, Filter, Menu } from 'lucide-react-native';
+import { useNavigation, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DrawerActions } from '@react-navigation/native';
+import Animated, { AnimatedTouchableOpacity, itemEntering, screenEntering, sectionEntering, smoothLayout } from '@/components/ui/motion';
 
 const operacionesData = [
   { id: '1023', tipo: 'Pedido', cliente: 'María López', monto: '150.00', estado: 'En camino', color: 'orange' },
@@ -17,7 +19,12 @@ const tabs = ['Todas', 'Pedidos', 'Cotizaciones', 'Alquileres', 'Suscripciones']
 export default function OperacionesScreen() {
   const [activeTab, setActiveTab] = useState('Todas');
   const router = useRouter();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
 
   const getStatusStyle = (color: string) => {
     switch(color) {
@@ -30,10 +37,12 @@ export default function OperacionesScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: typeof operacionesData[0] }) => (
-    <TouchableOpacity 
+  const renderItem = ({ item, index }: { item: typeof operacionesData[0]; index: number }) => (
+    <AnimatedTouchableOpacity 
       className="bg-white p-4 rounded-2xl mb-3 border border-slate-100 shadow-sm"
       onPress={() => router.push({ pathname: '/operaciones/[id]', params: { id: item.id } })}
+      entering={itemEntering(index)}
+      layout={smoothLayout}
     >
       {/* Top row */}
       <View className="flex-row justify-between items-center mb-1">
@@ -53,19 +62,20 @@ export default function OperacionesScreen() {
         <Text className="text-slate-500 text-sm">{item.cliente || item.fecha}</Text>
         <Text className="font-semibold text-slate-800 text-sm">S/ {item.monto}</Text>
       </View>
-    </TouchableOpacity>
+    </AnimatedTouchableOpacity>
   );
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center justify-between"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => router.push('/(drawer)/(tabs)')} className="mr-4">
-            <ArrowLeft color="white" size={24} />
+          <TouchableOpacity onPress={openDrawer} className="mr-4">
+            <Menu color="white" size={24} />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Operaciones</Text>
         </View>
@@ -77,24 +87,25 @@ export default function OperacionesScreen() {
             <Filter color="white" size={24} />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
       {/* Tabs */}
-      <View className="border-b border-slate-200">
+      <Animated.View className="border-b border-slate-200" entering={sectionEntering(1)}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
           {tabs.map((tab) => (
-            <TouchableOpacity 
+            <AnimatedTouchableOpacity 
               key={tab} 
               onPress={() => setActiveTab(tab)}
               className={`py-4 mr-6 border-b-2 ${activeTab === tab ? 'border-violet-600' : 'border-transparent'}`}
+              layout={smoothLayout}
             >
               <Text className={`${activeTab === tab ? 'text-violet-600 font-semibold' : 'text-slate-500'}`}>
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </AnimatedTouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* List */}
       <FlatList
@@ -104,6 +115,6 @@ export default function OperacionesScreen() {
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </Animated.View>
   );
 }

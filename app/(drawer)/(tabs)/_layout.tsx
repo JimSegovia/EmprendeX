@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { Home, FileText, Plus, Users, Menu } from 'lucide-react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HapticTab } from '@/components/haptic-tab';
 
 export default function TabLayout() {
   const navigation = useNavigation();
@@ -18,6 +19,9 @@ export default function TabLayout() {
         tabBarActiveTintColor: '#7c3aed',
         tabBarInactiveTintColor: '#94a3b8',
         tabBarAllowFontScaling: false,
+        tabBarButton: HapticTab,
+        tabBarHideOnKeyboard: true,
+        animation: 'shift',
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopColor: '#f1f5f9',

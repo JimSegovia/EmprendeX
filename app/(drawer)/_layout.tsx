@@ -1,30 +1,46 @@
 import { Drawer } from 'expo-router/drawer';
-import { useRouter } from 'expo-router';
+import { type Href, usePathname, useRouter } from 'expo-router';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
   Home, Users, Package, FileText, Calendar,
   RefreshCw, FileSignature, CreditCard, BarChart2, Settings, Crown
 } from 'lucide-react-native';
+import Animated, { itemEntering, smoothLayout } from '@/components/ui/motion';
 
 function CustomDrawerContent(props: any) {
   const { navigation } = props;
   const router = useRouter();
+  const pathname = usePathname();
   const insets = useSafeAreaInsets();
 
   const DRAWER_ITEMS = [
-    { label: 'Inicio', icon: Home, route: '(tabs)', active: true },
-    { label: 'Clientes', icon: Users, route: 'clientes' },
-    { label: 'Productos / Servicios', icon: Package, route: 'productos' },
-    { label: 'Operaciones', icon: FileText, route: 'operaciones' },
-    { label: 'Calendario', icon: Calendar, route: 'calendario' },
-    { label: 'Alquileres', icon: Home, route: 'alquileres' },
-    { label: 'Suscripciones', icon: RefreshCw, route: 'suscripciones' },
-    { label: 'Cotizaciones', icon: FileSignature, route: 'cotizaciones' },
-    { label: 'Pagos', icon: CreditCard, route: 'pagos' },
-    { label: 'Reportes', icon: BarChart2, route: 'reportes' },
-    { label: 'Configuración', icon: Settings, route: 'configuracion' },
+    { label: 'Inicio', icon: Home, href: '/(drawer)/(tabs)', tab: 'index', match: ['/'] },
+    { label: 'Clientes', icon: Users, href: '/(drawer)/(tabs)/clientes', tab: 'clientes', match: ['/clientes'] },
+    { label: 'Productos / Servicios', icon: Package, match: ['/productos'] },
+    { label: 'Operaciones', icon: FileText, href: '/(drawer)/(tabs)/operaciones', tab: 'operaciones', match: ['/operaciones'] },
+    { label: 'Calendario', icon: Calendar, href: '/calendario', match: ['/calendario'] },
+    { label: 'Alquileres', icon: Home, match: ['/alquileres'] },
+    { label: 'Suscripciones', icon: RefreshCw, match: ['/suscripciones'] },
+    { label: 'Cotizaciones', icon: FileSignature, match: ['/cotizaciones'] },
+    { label: 'Pagos', icon: CreditCard, match: ['/pagos'] },
+    { label: 'Reportes', icon: BarChart2, match: ['/reportes'] },
+    { label: 'Configuración', icon: Settings, match: ['/configuracion'] },
   ];
+
+  const navigateFromDrawer = (item: (typeof DRAWER_ITEMS)[number]) => {
+    if (!item.href) return;
+
+    navigation.closeDrawer();
+    requestAnimationFrame(() => {
+      if (item.tab) {
+        navigation.navigate('(tabs)', { screen: item.tab });
+        return;
+      }
+
+      router.push(item.href as Href);
+    });
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -46,33 +62,30 @@ function CustomDrawerContent(props: any) {
       <ScrollView className="flex-1 px-3 py-4" showsVerticalScrollIndicator={false}>
         {DRAWER_ITEMS.map((item, index) => {
           const Icon = item.icon;
-          const isActive = item.active;
+          const isHome = item.match.includes('/');
+          const isActive = isHome
+            ? pathname === '/'
+            : item.match.some((match) => pathname.startsWith(match));
 
           return (
-            <View key={index} className="relative mb-1 overflow-hidden rounded-xl">
-              {isActive && <View className="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-violet-500" />}
+            <Animated.View
+              key={item.label}
+              className="relative mb-1 overflow-hidden rounded-xl"
+              entering={itemEntering(index)}
+              layout={smoothLayout}
+            >
+              {isActive && <Animated.View className="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-violet-500" entering={itemEntering(0)} />}
               <TouchableOpacity
                 className={`flex-row items-center py-3.5 px-4 ${isActive ? 'bg-violet-50' : 'bg-transparent'}`}
-                onPress={() => {
-                  navigation.closeDrawer();
-
-                  if (item.route === '(tabs)') {
-                    navigation.navigate('(tabs)');
-                  } else if (item.route === 'clientes') {
-                    router.push('/clientes');
-                  } else if (item.route === 'operaciones') {
-                    router.push('/operaciones');
-                  } else if (item.route === 'calendario') {
-                    router.push('/calendario');
-                  }
-                }}
+                activeOpacity={item.href ? 0.75 : 1}
+                onPress={() => navigateFromDrawer(item)}
               >
-                <Icon size={19} color={isActive ? '#7c3aed' : '#475569'} />
-                <Text className={`ml-4 text-[15px] font-semibold ${isActive ? 'text-violet-600' : 'text-slate-700'}`}>
+                <Icon size={19} color={isActive ? '#7c3aed' : item.href ? '#475569' : '#cbd5e1'} />
+                <Text className={`ml-4 text-[15px] font-semibold ${isActive ? 'text-violet-600' : item.href ? 'text-slate-700' : 'text-slate-300'}`}>
                   {item.label}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           );
         })}
       </ScrollView>
@@ -83,7 +96,7 @@ function CustomDrawerContent(props: any) {
           className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-4"
           onPress={() => {
             navigation.closeDrawer();
-            router.push('/plan-pro');
+            requestAnimationFrame(() => router.push('/plan-pro'));
           }}
         >
           <View className="flex-row items-center">
@@ -111,6 +124,8 @@ export default function DrawerLayout() {
       screenOptions={{
         headerShown: false,
         drawerType: 'front',
+        swipeEnabled: true,
+        swipeEdgeWidth: 72,
         drawerStyle: {
           width: '82%',
           backgroundColor: '#ffffff',
@@ -119,7 +134,7 @@ export default function DrawerLayout() {
           shadowColor: 'transparent',
           elevation: 0,
         },
-        overlayColor: 'rgba(15, 23, 42, 0.32)',
+        overlayColor: 'rgba(15, 23, 42, 0.28)',
         sceneStyle: { backgroundColor: '#ffffff' },
       }}
     >

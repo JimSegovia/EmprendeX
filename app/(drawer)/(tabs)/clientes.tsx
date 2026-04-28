@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft, Search, Filter } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { Menu, Search, Filter } from 'lucide-react-native';
+import { useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
+import Animated, { AnimatedTouchableOpacity, itemEntering, screenEntering, sectionEntering, smoothLayout } from '@/components/ui/motion';
 
 const clientesData = [
   { id: '1', name: 'Maria López', phone: '987 654 321', compras: 12, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
@@ -15,10 +17,18 @@ const clientesData = [
 
 export default function ClientesScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
+  const navigation = useNavigation();
 
-  const renderItem = ({ item }: { item: typeof clientesData[0] }) => (
-    <TouchableOpacity className="flex-row items-center justify-between py-5 border-b border-slate-100 bg-white">
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  const renderItem = ({ item, index }: { item: typeof clientesData[0]; index: number }) => (
+    <AnimatedTouchableOpacity
+      className="flex-row items-center justify-between py-5 border-b border-slate-100 bg-white"
+      entering={itemEntering(index)}
+      layout={smoothLayout}
+    >
       <View className="flex-row items-center">
         <Image 
           source={{ uri: item.avatar }} 
@@ -30,19 +40,20 @@ export default function ClientesScreen() {
         </View>
       </View>
       <Text className="text-slate-400 text-[13px]">{item.compras} compras</Text>
-    </TouchableOpacity>
+    </AnimatedTouchableOpacity>
   );
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center justify-between"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => router.push('/')} className="mr-4">
-            <ArrowLeft color="white" size={24} />
+          <TouchableOpacity onPress={openDrawer} className="mr-4">
+            <Menu color="white" size={24} />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Clientes</Text>
         </View>
@@ -54,7 +65,7 @@ export default function ClientesScreen() {
             <Filter color="white" size={24} />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
       {/* List */}
       <FlatList
@@ -64,6 +75,6 @@ export default function ClientesScreen() {
         contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </Animated.View>
   );
 }

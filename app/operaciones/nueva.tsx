@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { ArrowLeft, Calendar, ChevronDown } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { AnimatedTouchableOpacity, screenEntering, sectionEntering, smoothLayout } from '@/components/ui/motion';
 
 const tabs = ['Pedido', 'Cotización', 'Alquiler', 'Suscripción'];
 
@@ -12,42 +13,45 @@ export default function NuevaOperacionScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <ArrowLeft color="white" size={24} />
         </TouchableOpacity>
         <Text className="text-white text-xl font-bold">Nueva operación</Text>
-      </View>
+      </Animated.View>
 
       {/* Tabs */}
-      <View className="border-b border-slate-200">
+      <Animated.View className="border-b border-slate-200" entering={sectionEntering(1)}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
           {tabs.map((tab) => (
-            <TouchableOpacity 
+            <AnimatedTouchableOpacity 
               key={tab} 
               onPress={() => setActiveTab(tab)}
               className={`py-4 mr-6 border-b-2 ${activeTab === tab ? 'border-violet-600' : 'border-transparent'}`}
+              layout={smoothLayout}
             >
               <Text className={`${activeTab === tab ? 'text-violet-600 font-semibold' : 'text-slate-500'}`}>
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </AnimatedTouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+      </Animated.View>
 
-      <ScrollView
+      <Animated.ScrollView
         className="flex-1 p-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 16 }}
+        entering={sectionEntering(2)}
       >
         {/* Cliente */}
-        <View className="mb-6">
+        <Animated.View className="mb-6" entering={sectionEntering(3)}>
           <Text className="font-bold text-slate-800 mb-2">Cliente</Text>
           <TouchableOpacity className="flex-row items-center justify-between border border-slate-200 rounded-xl p-4 bg-white">
             <Text className="text-slate-400">Seleccionar cliente</Text>
@@ -56,10 +60,10 @@ export default function NuevaOperacionScreen() {
           <TouchableOpacity className="items-end mt-2">
             <Text className="text-violet-600 font-medium">+ Nuevo cliente</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Productos / Servicios */}
-        <View className="mb-6">
+        <Animated.View className="mb-6" entering={sectionEntering(4)}>
           <Text className="font-bold text-slate-800 mb-2">Productos / Servicios</Text>
           <TouchableOpacity className="flex-row items-center justify-between border border-slate-200 rounded-xl p-4 bg-white">
             <Text className="text-slate-400">Seleccionar producto</Text>
@@ -68,31 +72,32 @@ export default function NuevaOperacionScreen() {
           <TouchableOpacity className="items-end mt-2">
             <Text className="text-violet-600 font-medium">+ Agregar producto</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Fecha de entrega */}
-        <View className="mb-6">
+        <Animated.View className="mb-6" entering={sectionEntering(5)}>
           <Text className="font-bold text-slate-800 mb-2">Fecha de entrega</Text>
           <TouchableOpacity className="flex-row items-center justify-between border border-slate-200 rounded-xl p-4 bg-white">
             <Text className="text-slate-800">20/05/2024</Text>
             <Calendar color="#94a3b8" size={20} />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Método de entrega */}
-        <View className="mb-8">
+        <Animated.View className="mb-8" entering={sectionEntering(6)}>
           <Text className="font-bold text-slate-800 mb-2">Método de entrega</Text>
           <TouchableOpacity className="flex-row items-center justify-between border border-slate-200 rounded-xl p-4 bg-white">
             <Text className="text-slate-400">Seleccionar método</Text>
             <ChevronDown color="#94a3b8" size={20} />
           </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </Animated.View>
+      </Animated.ScrollView>
 
       {/* Footer */}
-      <View
+      <Animated.View
         className="border-t border-slate-100 bg-white px-4 pt-4 flex-row items-center justify-between"
         style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+        entering={sectionEntering(7)}
       >
         <View>
           <Text className="text-slate-500 font-medium">Total</Text>
@@ -104,7 +109,7 @@ export default function NuevaOperacionScreen() {
         >
           <Text className="text-white font-bold">Guardar</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 }

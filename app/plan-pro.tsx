@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, Crown, Check, Sparkles } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import Animated, { AnimatedTouchableOpacity, screenEntering, sectionEntering, smoothLayout } from '@/components/ui/motion';
 
 export default function PlanProScreen() {
   const insets = useSafeAreaInsets();
@@ -18,11 +19,12 @@ export default function PlanProScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center justify-between"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="mr-4">
@@ -30,15 +32,16 @@ export default function PlanProScreen() {
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Plan Pro</Text>
         </View>
-      </View>
+      </Animated.View>
 
-      <ScrollView
+      <Animated.ScrollView
         className="flex-1 px-6 pt-8"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
+        entering={sectionEntering(1)}
       >
         {/* Crown Icon */}
-        <View className="items-center justify-center mb-8 relative">
+        <Animated.View className="items-center justify-center mb-8 relative" entering={sectionEntering(2)}>
           <Crown size={80} color="#f59e0b" strokeWidth={1.5} />
           <View className="absolute top-0 right-1/4">
             <Sparkles size={24} color="#f59e0b" />
@@ -46,7 +49,7 @@ export default function PlanProScreen() {
           <View className="absolute bottom-2 left-1/4">
             <Sparkles size={16} color="#f59e0b" />
           </View>
-        </View>
+        </Animated.View>
 
         {/* Title */}
         <Text className="text-center text-slate-800 text-lg mb-8">
@@ -55,36 +58,38 @@ export default function PlanProScreen() {
         </Text>
 
         {/* Features List */}
-        <View className="mb-10 px-2 space-y-4">
+        <Animated.View className="mb-10 px-2 space-y-4" entering={sectionEntering(3)}>
           {features.map((feature, index) => (
             <View key={index} className="flex-row items-center mb-3">
               <Check size={20} color="#10b981" className="mr-3" />
               <Text className="text-slate-700 text-base">{feature}</Text>
             </View>
           ))}
-        </View>
+        </Animated.View>
 
         {/* Pricing Plans */}
-        <View className="flex-row justify-between mb-8">
+        <Animated.View className="flex-row justify-between mb-8" entering={sectionEntering(4)}>
           {/* Mensual */}
-          <TouchableOpacity 
+          <AnimatedTouchableOpacity 
             className={`w-[48%] p-4 rounded-2xl border-2 ${selectedPlan === 'mensual' ? 'border-violet-600 bg-violet-50' : 'border-slate-100 bg-white'}`}
             onPress={() => setSelectedPlan('mensual')}
+            layout={smoothLayout}
           >
             <Text className={`font-bold mb-2 ${selectedPlan === 'mensual' ? 'text-violet-900' : 'text-slate-800'}`}>Mensual</Text>
             <Text className="text-2xl font-extrabold text-slate-800">S/ 29.90</Text>
-          </TouchableOpacity>
+          </AnimatedTouchableOpacity>
 
           {/* Anual */}
-          <TouchableOpacity 
+          <AnimatedTouchableOpacity 
             className={`w-[48%] p-4 rounded-2xl border-2 ${selectedPlan === 'anual' ? 'border-violet-600 bg-violet-50' : 'border-slate-100 bg-slate-50'}`}
             onPress={() => setSelectedPlan('anual')}
+            layout={smoothLayout}
           >
             <Text className={`font-bold mb-2 ${selectedPlan === 'anual' ? 'text-violet-900' : 'text-slate-600'}`}>Anual</Text>
             <Text className="text-2xl font-extrabold text-slate-800 mb-1">S/ 299.00</Text>
             <Text className="text-slate-500 text-xs">Ahorra 17%</Text>
-          </TouchableOpacity>
-        </View>
+          </AnimatedTouchableOpacity>
+        </Animated.View>
 
         {/* Action Button */}
         <TouchableOpacity className="bg-violet-600 w-full py-4 rounded-xl items-center shadow-md shadow-violet-200 mb-6">
@@ -96,7 +101,7 @@ export default function PlanProScreen() {
           <Text className="text-violet-600 font-medium">Ahora no, continuar gratis</Text>
         </TouchableOpacity>
 
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+    </Animated.View>
   );
 }

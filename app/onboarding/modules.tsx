@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { 
@@ -14,6 +14,7 @@ import {
   BarChart2,
   Check
 } from 'lucide-react-native';
+import Animated, { AnimatedTouchableOpacity, quickCheckEntering, quickCheckExiting, screenEntering, sectionEntering, smoothLayout } from '@/components/ui/motion';
 
 const MODULES = [
   { id: 'pedidos', title: 'Pedidos', desc: 'Gestiona pedidos y entregas.', icon: Package, defaultChecked: true },
@@ -43,38 +44,40 @@ export default function ModulesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white pt-12">
       {/* Header */}
-      <View className="flex-row items-center px-4 mb-4">
+      <Animated.View className="flex-row items-center px-4 mb-4" entering={sectionEntering(0)}>
         <TouchableOpacity 
           className="p-2 rounded-full"
           onPress={() => router.back()}
         >
           <ArrowLeft size={24} color="#334155" />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      <View className="items-center px-6 mb-6">
+      <Animated.View className="items-center px-6 mb-6" entering={sectionEntering(1)}>
         <Text className="text-3xl font-bold text-slate-800 text-center mb-2">
           Elige tus módulos
         </Text>
         <Text className="text-slate-500 text-center text-base">
           Activa los módulos que necesitas. Puedes cambiarlos después.
         </Text>
-      </View>
+      </Animated.View>
 
       {/* Modules List */}
-      <ScrollView className="flex-1 px-6">
-        <View className="border border-slate-100 rounded-3xl overflow-hidden mb-6 bg-white shadow-sm shadow-slate-100">
+      <Animated.ScrollView className="flex-1 px-6" entering={screenEntering}>
+        <Animated.View className="border border-slate-100 rounded-3xl overflow-hidden mb-6 bg-white shadow-sm shadow-slate-100" entering={sectionEntering(2)}>
           {MODULES.map((module, index) => {
             const isSelected = selectedModules[module.id];
             const isLast = index === MODULES.length - 1;
             const Icon = module.icon;
 
             return (
-              <TouchableOpacity
+              <AnimatedTouchableOpacity
                 key={module.id}
                 className={`flex-row items-center p-4 bg-white ${!isLast ? 'border-b border-slate-100' : ''}`}
                 activeOpacity={0.7}
                 onPress={() => toggleModule(module.id)}
+                entering={sectionEntering(index)}
+                layout={smoothLayout}
               >
                 <View className="bg-violet-50 p-2 rounded-xl mr-4">
                   <Icon size={24} color="#7c3aed" />
@@ -90,23 +93,27 @@ export default function ModulesScreen() {
                     isSelected ? 'bg-violet-600 border-violet-600' : 'bg-transparent border-slate-300'
                   }`}
                 >
-                  {isSelected && <Check size={16} color="white" strokeWidth={3} />}
+                  {isSelected && (
+                    <Animated.View entering={quickCheckEntering} exiting={quickCheckExiting}>
+                      <Check size={16} color="white" strokeWidth={3} />
+                    </Animated.View>
+                  )}
                 </View>
-              </TouchableOpacity>
+              </AnimatedTouchableOpacity>
             );
           })}
-        </View>
-      </ScrollView>
+        </Animated.View>
+      </Animated.ScrollView>
 
       {/* Footer */}
-      <View className="p-6 bg-white">
+      <Animated.View className="p-6 bg-white" entering={sectionEntering(3)}>
         <TouchableOpacity 
           className="w-full bg-violet-600 rounded-xl py-4 items-center justify-center active:bg-violet-700"
           onPress={handleSave}
         >
           <Text className="text-white font-bold text-lg">Guardar y continuar</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }

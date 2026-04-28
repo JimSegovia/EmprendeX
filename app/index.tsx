@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Link, router } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
+import Animated, { screenEntering, sectionEntering } from '@/components/ui/motion';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -25,10 +26,10 @@ export default function LoginScreen() {
           className="bg-white"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 px-8 py-10 justify-between">
+          <Animated.View className="flex-1 px-8 py-10 justify-between" entering={screenEntering}>
             
             {/* Header / Logo */}
-            <View className="items-center mt-4">
+            <Animated.View className="items-center mt-4" entering={sectionEntering(0)}>
               <View className="flex-row items-center justify-center">
                 <Text className="text-3xl font-bold text-slate-800 tracking-tight">Emprende</Text>
                 <Text className="text-4xl font-extrabold text-violet-600 italic ml-1">X</Text>
@@ -36,20 +37,20 @@ export default function LoginScreen() {
               <Text className="text-slate-500 text-base font-medium mt-1">
                 Tu negocio, en orden.
               </Text>
-            </View>
+            </Animated.View>
 
             {/* Illustration */}
-            <View className="items-center justify-center my-6">
+            <Animated.View className="items-center justify-center my-6" entering={sectionEntering(1)}>
               <Image
                 source={require('../assets/images/emprendex-login.png')}
                 style={{ width: '100%', aspectRatio: 1.5 }}
                 contentFit="contain"
                 contentPosition="center"
               />
-            </View>
+            </Animated.View>
 
             {/* Form Section */}
-            <View className="w-full">
+            <Animated.View className="w-full" entering={sectionEntering(2)}>
               <View className="mb-5">
                 <Text className="text-slate-700 font-semibold mb-2">Correo electrónico</Text>
                 <TextInput
@@ -114,9 +115,9 @@ export default function LoginScreen() {
                   </TouchableOpacity>
                 </Link>
               </View>
-            </View>
+            </Animated.View>
             
-          </View>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

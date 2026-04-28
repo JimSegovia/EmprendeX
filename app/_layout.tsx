@@ -38,14 +38,25 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="register" options={{ headerShown: false, presentation: 'modal' }} />
-        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen name="operaciones" options={{ headerShown: false }} />
-        <Stack.Screen name="calendario" options={{ headerShown: false }} />
-        <Stack.Screen name="plan-pro" options={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+          contentStyle: { backgroundColor: "#ffffff" },
+          gestureEnabled: true,
+          fullScreenGestureEnabled: true,
+        }}
+      >
+        <Stack.Screen name="index" options={{ animation: "fade" }} />
+        <Stack.Screen
+          name="register"
+          options={{ presentation: "modal", animation: "slide_from_bottom" }}
+        />
+        <Stack.Screen name="onboarding" options={{ animation: "fade_from_bottom" }} />
+        <Stack.Screen name="(drawer)" options={{ animation: "fade" }} />
+        <Stack.Screen name="operaciones" />
+        <Stack.Screen name="calendario" />
+        <Stack.Screen name="plan-pro" />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}

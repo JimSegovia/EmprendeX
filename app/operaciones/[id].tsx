@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { screenEntering, sectionEntering } from '@/components/ui/motion';
 
 export default function OperacionDetalleScreen() {
   const { id } = useLocalSearchParams();
@@ -10,11 +11,12 @@ export default function OperacionDetalleScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-white">
+    <Animated.View className="flex-1 bg-white" entering={screenEntering}>
       {/* Header */}
-      <View 
+      <Animated.View 
         className="bg-violet-600 px-4 pb-4 flex-row items-center justify-between"
         style={{ paddingTop: Math.max(insets.top, 16) + 16 }}
+        entering={sectionEntering(0)}
       >
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="mr-4">
@@ -25,18 +27,18 @@ export default function OperacionDetalleScreen() {
         <TouchableOpacity>
           <MoreVertical color="white" size={24} />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      <ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false} entering={sectionEntering(1)}>
         {/* Status Badge */}
-        <View className="items-end mb-6">
+        <Animated.View className="items-end mb-6" entering={sectionEntering(2)}>
           <View className="bg-orange-100 px-4 py-1.5 rounded-full">
             <Text className="text-orange-600 font-medium text-sm">En camino</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Información Section */}
-        <View className="mb-8">
+        <Animated.View className="mb-8" entering={sectionEntering(3)}>
           <Text className="text-lg font-bold text-slate-800 mb-4">Información</Text>
           
           <View className="space-y-4">
@@ -65,12 +67,12 @@ export default function OperacionDetalleScreen() {
               <Text className="text-slate-800 font-medium">Torta de chocolate sin azúcar.</Text>
             </View>
           </View>
-        </View>
+        </Animated.View>
 
         <View className="h-[1px] bg-slate-100 mb-8" />
 
         {/* Productos Section */}
-        <View className="mb-8">
+        <Animated.View className="mb-8" entering={sectionEntering(4)}>
           <Text className="text-lg font-bold text-slate-800 mb-4">Productos</Text>
           
           <View className="flex-row items-center justify-between">
@@ -90,21 +92,21 @@ export default function OperacionDetalleScreen() {
             </View>
             <Text className="font-bold text-slate-800">S/ 150.00</Text>
           </View>
-        </View>
+        </Animated.View>
 
         <View className="h-[1px] bg-slate-100 mb-8" />
 
         {/* Resumen Section */}
-        <View className="mb-12">
+        <Animated.View className="mb-12" entering={sectionEntering(5)}>
           <Text className="text-lg font-bold text-slate-800 mb-4">Resumen</Text>
           
           <View className="flex-row justify-between">
             <Text className="text-slate-500">Subtotal</Text>
             <Text className="text-slate-800 font-medium">S/ 150.00</Text>
           </View>
-        </View>
+        </Animated.View>
 
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+    </Animated.View>
   );
 }
