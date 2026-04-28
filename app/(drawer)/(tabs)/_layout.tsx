@@ -1,12 +1,15 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useNavigation, useRouter } from 'expo-router';
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Home, FileText, Plus, Users, Menu } from 'lucide-react-native';
-import { useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   const navigation = useNavigation();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const bottomInset = insets.bottom;
 
   return (
     <Tabs
@@ -14,31 +17,42 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: '#7c3aed',
         tabBarInactiveTintColor: '#94a3b8',
+        tabBarAllowFontScaling: false,
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopColor: '#f1f5f9',
           borderTopWidth: 1,
-          height: 70,
-          paddingBottom: 10,
-          paddingTop: 10,
+          height: 64 + bottomInset,
+          paddingBottom: bottomInset,
+          paddingTop: 8,
+        },
+        tabBarItemStyle: {
+          height: 56,
+          paddingVertical: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: 2,
+          marginBottom: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+          fontSize: 11,
+          fontWeight: '600',
+          lineHeight: 14,
+          marginTop: 1,
         }
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Inicio',
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Home size={25} color={color} />,
         }}
       />
       <Tabs.Screen
         name="operaciones"
         options={{
           title: 'Operaciones',
-          tabBarIcon: ({ color }) => <FileText size={24} color={color} />,
+          tabBarIcon: ({ color }) => <FileText size={25} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -46,8 +60,8 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: () => (
-            <View className="bg-violet-600 w-14 h-14 rounded-full items-center justify-center -mt-6 border-4 border-white shadow-sm shadow-violet-200">
-              <Plus size={28} color="white" />
+            <View className="bg-violet-600 w-12 h-12 rounded-full items-center justify-center -mt-5 border-4 border-white shadow-sm shadow-violet-200">
+              <Plus size={26} color="white" />
             </View>
           ),
           // Disable default click so we could show a modal or action sheet
@@ -55,7 +69,7 @@ export default function TabLayout() {
             <TouchableOpacity 
               {...props} 
               activeOpacity={0.8}
-              onPress={() => console.log('FAB pressed')} 
+              onPress={() => router.push('/operaciones/nueva')}
             />
           )
         }}
@@ -64,14 +78,14 @@ export default function TabLayout() {
         name="clientes"
         options={{
           title: 'Clientes',
-          tabBarIcon: ({ color }) => <Users size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Users size={25} color={color} />,
         }}
       />
       <Tabs.Screen
         name="mas"
         options={{
           title: 'Más',
-          tabBarIcon: ({ color }) => <Menu size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Menu size={25} color={color} />,
           tabBarButton: (props: any) => (
              <TouchableOpacity 
               {...props} 

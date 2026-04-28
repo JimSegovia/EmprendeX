@@ -40,10 +40,11 @@ export default function LoginScreen() {
 
             {/* Illustration */}
             <View className="items-center justify-center my-6">
-               <Image
-                source={require('../assets/images/emprendex_login_illustration.png')}
-                style={{ width: '100%', height: 220 }}
+              <Image
+                source={require('../assets/images/emprendex-login.png')}
+                style={{ width: '100%', aspectRatio: 1.5 }}
                 contentFit="contain"
+                contentPosition="center"
               />
             </View>
 
